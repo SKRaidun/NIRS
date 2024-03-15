@@ -13,9 +13,9 @@ frame_particles = pd.DataFrame(dict_particles).T
 
 Energy_exp = []
 counts = []
-angles = [17.4]
+angles = [20.7]
 with open(
-    "/Users/semenraydun/Desktop/NIRS/RUN019/RUN019_6He_bin/RUN019_dE2(6He)_17.4.txt",
+    "/Users/semenraydun/Desktop/NIRS/RUN010/RUN010_6He_bin/RUN010_dE2(6He)_20.7.txt",
     "r",
 ) as file:
     for line in file:
