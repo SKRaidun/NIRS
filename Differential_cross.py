@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import curve_fit
 import seaborn as sns
+from prettytable import PrettyTable
 
 frame_particles = pd.DataFrame(dict_particles).T
 
@@ -316,6 +317,7 @@ def approximate(E_calib, E_11C, Full_data):
 def calibration(E_He, counts):
 
     plt.figure()
+
     plt.vlines(
         x=E_He[0], ymin=0, ymax=50, colors=["red"], linestyle="dashed", linewidth=1
     )
@@ -335,6 +337,21 @@ def calibration(E_He, counts):
     plt.ylabel("counts")
 
     plt.show(block=False)
+
+    # Для поиска ширины g.s
+    max = counts[len(counts) - 30]
+    for i in range(len(counts) - 30, len(counts)):
+        if counts[i] > max:
+            max = counts[i]
+            index = i
+
+    plt.hlines(y=max / 2, xmin=0, xmax=100, colors=["orange"], linewidth=1)
+
+    print("Две точки на полувысоте")
+
+    width = float(input())
+    a = float(input())
+    width = abs(width - a)
 
     # Модуль калибровки
 
@@ -386,6 +403,8 @@ def calibration(E_He, counts):
 
     plt.show(block=False)
 
+    return Results, width
+
 
 def Kinematics(A, B, C, D, angles):
     E_Aparticle = 58
@@ -403,11 +422,70 @@ def Kinematics(A, B, C, D, angles):
         E_particle.append(
             calculate_E_t(A, B, C, D, E_Aparticle, angles, frame_particles, Q_react[i])
         )
-    return E_particle
+    return E_particle, E_x
 
+
+def output(Results, width, E_lvl):
+
+    Xmin = [e.copy() for e in Results]
+    Xmax = [e.copy() for e in Results]
+    Amin = 0.1
+    Amax = 10000
+    wmin = width - 0.05
+    wmax = width + 0.05
+    Residual = ["11C", "13N", "17F", "12C"]
+
+    for i in range(len(Xmin)):
+        for k in range(len(Xmin[i])):
+            Xmin[i][k] -= 0.15
+
+    for i in range(len(Xmax)):
+        for k in range(len(Xmax[i])):
+            Xmax[i][k] += 0.15
+
+    # mytable = PrettyTable()
+
+    # mytable.field_names = ["Ядро", "Уровень", "Xcmin", "Xcmax", "Wmin", "Wmax", "Amin", "Amax"]
+    # mytable.add_rows([
+    #     [Residual[0], E_lvl[0], Xmin[0], Xmax[0], wmin, wmax, Amin, Amax],
+    #     [Residual[1], E_lvl[1], Xmin[1], Xmax[1], wmin, wmax, Amin, Amax],
+    #     [Residual[2], E_lvl[2], Xmin[2], Xmax[2], wmin, wmax, Amin, Amax],
+    #     [Residual[3], E_lvl[3], Xmin[3], Xmax[3], wmin, wmax, Amin, Amax]
+    # ])
+    print(Xmin)
+    print(Xmax)
+    print(width)
+
+    Info = [
+        [Residual[0], E_lvl[0], Xmin[0], Xmax[0]],
+        [Residual[1], E_lvl[1], Xmin[1], Xmax[1]],
+        [Residual[2], E_lvl[2], Xmin[2], Xmax[2]],
+        [Residual[3], E_lvl[3], Xmin[3], Xmax[3]],
+    ]
+
+    data = [
+        {
+            "Ядро": x[0],
+            "Уровень": x[1],
+            "Xmin": x[2],
+            "Xmax": x[3],
+            "Wmin": wmin,
+            "Wmax": wmax,
+            "Amin": Amin,
+            "Amax": Amax,
+        }
+        for x in Info
+    ]
+
+    df = pd.DataFrame(data)
+
+    df.to_csv('Testtable.csv', index=False, header=True)
+# Выводим таблицу на экран
+    print(df)
 
 def main():
     E_He = []
+    E_lvl = []
     with open("/Users/semenraydun/Desktop/NIRS/reactions.txt", "r") as file:
         for line in file:
             data = line.split()
@@ -415,8 +493,10 @@ def main():
             B = data[1]
             C = data[2]
             D = data[3]
-            E_He.append(Kinematics(A, B, C, D, angles[0]))
-    calibration(E_He, counts)
+            E_He.append(Kinematics(A, B, C, D, angles[0])[0])
+            E_lvl.append(Kinematics(A, B, C, D, angles[0])[1])
+    Results, width = calibration(E_He, counts)
+    output(Results, width, E_lvl)
 
 
 main()
