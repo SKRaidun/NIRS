@@ -334,7 +334,6 @@ def calibration(E_He, counts):
 
     Results = approximate(Calibration_lvls, Calib, E_He)
 
-
     return Results, width
 
 
@@ -360,7 +359,7 @@ def Kinematics(A, B, C, D, angles):
 def output(Results, width, E_lvl):
 
     plt.figure()
-    
+
     plt.vlines(
         x=Results[0], ymin=0, ymax=50, colors=["red"], linestyle="dashed", linewidth=1
     )
