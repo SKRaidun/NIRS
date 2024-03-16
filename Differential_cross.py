@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import curve_fit
 import seaborn as sns
-import io
 
 frame_particles = pd.DataFrame(dict_particles).T
 
@@ -23,52 +22,6 @@ with open(
         data = line.split()
         Energy_exp.append(float(data[0]))
         counts.append(float(data[1]))
-
-# def get_input(frame_particles: pd.DataFrame):
-#     """Input from the user"""
-#     A = None
-#     B = None
-#     C = None
-#     D = None
-#     E_Aparticle = None
-#     angles = None
-
-#     while A not in frame_particles.index:
-#         A = input("Beam particle: ")
-#         if A not in frame_particles.index:
-#             print("Error: Invalid beam particle!")
-
-#     while B not in frame_particles.index:
-#         B = input("Target: ")
-#         if B not in frame_particles.index:
-#             print("Error: Invalid target!")
-
-#     while C not in frame_particles.index:
-#         C = input("Fragment: ")
-#         if C not in frame_particles.index:
-#             print("Error: Invalid beam particle!")
-
-#     while D not in frame_particles.index:
-#         D = input("Residual: ")
-#         if D not in frame_particles.index:
-#             print("Error: Invalid beam particle!")
-
-#     # while E_Aparticle is None:
-#     #     try:
-#     #         E_Aparticle = float(input("Incident particle energy: "))
-#     #     except ValueError:
-#     #         print("Error: Incident particle energy must be a valid float!")
-
-#     # while angles is None:
-#     #     try:
-#     #         angles = [
-#     #             float(angle)
-#     #             for angle in input("Enter a list of angles (space-separated): ").split()
-#     #         ]
-#     #     except ValueError:
-#     #         print("Error: Angles must be valid floats!")
-
-#     return A, B, C, D
 
 
 def calculate_Q_react(A: str, B: str, C: str, D: str, frame_particles: pd.DataFrame):
@@ -443,15 +396,6 @@ def output(Results, width, E_lvl):
         for k in range(len(Xmax[i])):
             Xmax[i][k] += 0.15
 
-    # mytable = PrettyTable()
-
-    # mytable.field_names = ["Ядро", "Уровень", "Xcmin", "Xcmax", "Wmin", "Wmax", "Amin", "Amax"]
-    # mytable.add_rows([
-    #     [Residual[0], E_lvl[0], Xmin[0], Xmax[0], wmin, wmax, Amin, Amax],
-    #     [Residual[1], E_lvl[1], Xmin[1], Xmax[1], wmin, wmax, Amin, Amax],
-    #     [Residual[2], E_lvl[2], Xmin[2], Xmax[2], wmin, wmax, Amin, Amax],
-    #     [Residual[3], E_lvl[3], Xmin[3], Xmax[3], wmin, wmax, Amin, Amax]
-    # ])
     print(Xmin)
     print(Xmax)
     print(width)
@@ -463,14 +407,25 @@ def output(Results, width, E_lvl):
         [Residual[3], E_lvl[3], Xmin[3], Xmax[3]],
     ]
 
-    df = pd.DataFrame(columns = ["Ядро", "Уровень", "Xcmin", "Xcmax", "Wmin", "Wmax", "Amin", "Amax"])
+    df = pd.DataFrame(
+        columns=["Ядро", "Уровень", "Xcmin", "Xcmax", "Wmin", "Wmax", "Amin", "Amax"]
+    )
 
-    for i in range(0,4):
-            for k in range(len(E_lvl[i])):
-                df.loc[len(df)] = {'Ядро':Residual[i], 'Уровень': E_lvl[i][k], 'Xcmin':Xmin[i][k], 'Xcmax':Xmax[i][k], 'Wmin':wmin, 'Wmax':wmax, 'Amin':Amin, 'Amax':Amax}
+    for i in range(0, 4):
+        for k in range(len(E_lvl[i])):
+            df.loc[len(df)] = {
+                "Ядро": Residual[i],
+                "Уровень": E_lvl[i][k],
+                "Xcmin": Xmin[i][k],
+                "Xcmax": Xmax[i][k],
+                "Wmin": wmin,
+                "Wmax": wmax,
+                "Amin": Amin,
+                "Amax": Amax,
+            }
     print(df)
     with open("testTable1.csv", "w") as f:
-         f.write(df.to_csv(index=False))
+        f.write(df.to_csv(index=False))
 
 
 def main():
