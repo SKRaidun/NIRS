@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import curve_fit
 import seaborn as sns
-from prettytable import PrettyTable
+import io
 
 frame_particles = pd.DataFrame(dict_particles).T
 
@@ -463,25 +463,15 @@ def output(Results, width, E_lvl):
         [Residual[3], E_lvl[3], Xmin[3], Xmax[3]],
     ]
 
-    data = [
-        {
-            "Ядро": x[0],
-            "Уровень": x[1],
-            "Xmin": x[2],
-            "Xmax": x[3],
-            "Wmin": wmin,
-            "Wmax": wmax,
-            "Amin": Amin,
-            "Amax": Amax,
-        }
-        for x in Info
-    ]
+    df = pd.DataFrame(columns = ["Ядро", "Уровень", "Xcmin", "Xcmax", "Wmin", "Wmax", "Amin", "Amax"])
 
-    df = pd.DataFrame(data)
-
-    df.to_csv('Testtable.csv', index=False, header=True)
-# Выводим таблицу на экран
+    for i in range(0,4):
+            for k in range(len(E_lvl[i])):
+                df.loc[len(df)] = {'Ядро':Residual[i], 'Уровень': E_lvl[i][k], 'Xcmin':Xmin[i][k], 'Xcmax':Xmax[i][k], 'Wmin':wmin, 'Wmax':wmax, 'Amin':Amin, 'Amax':Amax}
     print(df)
+    with open("testTable1.csv", "w") as f:
+         f.write(df.to_csv(index=False))
+
 
 def main():
     E_He = []
