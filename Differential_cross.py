@@ -230,7 +230,7 @@ def approximate(E_calib, E_11C, Full_data):
     plt.figure()
     color_dict = {"linear": "blue", "quadratic": "green", "qubic": "slateblue"}
 
-    linewidth_dict = {"linear": 2, "quadratic": 2, "qubic": 2}
+    linewidth_dict = {"linear": 1, "quadratic": 1, "qubic": 1}
 
     plt.rcParams["axes.titlesize"] = 14
     plt.rcParams["legend.fontsize"] = 12
@@ -260,7 +260,6 @@ def approximate(E_calib, E_11C, Full_data):
     func = calculation_results_df.loc[app_type, "func"]
     popt = calculation_results_df.loc[app_type, "popt"]
     Full_calculations = []
-    print(Full_data)
     for i in range(len(Full_data)):
         Full_calculations.append(func(np.array(Full_data[i]), *popt))
 
@@ -335,26 +334,6 @@ def calibration(E_He, counts):
 
     Results = approximate(Calibration_lvls, Calib, E_He)
 
-    plt.figure()
-    plt.vlines(
-        x=Results[0], ymin=0, ymax=50, colors=["red"], linestyle="dashed", linewidth=1
-    )
-    plt.vlines(
-        x=Results[1], ymin=0, ymax=50, colors=["blue"], linestyle="dashed", linewidth=1
-    )
-    plt.vlines(
-        x=Results[2], ymin=0, ymax=50, colors=["green"], linestyle="dashed", linewidth=1
-    )
-    plt.vlines(
-        x=Results[3], ymin=0, ymax=50, colors=["black"], linestyle="dashed", linewidth=1
-    )
-    plt.legend(["11C", "13N", "17F", "12C"])
-    plt.axhline(y=12.1, color="grey", linewidth=2)
-    plt.plot(Energy_exp, counts, color="black")
-    plt.xlabel("E, MeV")
-    plt.ylabel("counts")
-
-    plt.show(block=False)
 
     return Results, width
 
@@ -379,6 +358,28 @@ def Kinematics(A, B, C, D, angles):
 
 
 def output(Results, width, E_lvl):
+
+    plt.figure()
+    
+    plt.vlines(
+        x=Results[0], ymin=0, ymax=50, colors=["red"], linestyle="dashed", linewidth=1
+    )
+    plt.vlines(
+        x=Results[1], ymin=0, ymax=50, colors=["blue"], linestyle="dashed", linewidth=1
+    )
+    plt.vlines(
+        x=Results[2], ymin=0, ymax=50, colors=["green"], linestyle="dashed", linewidth=1
+    )
+    plt.vlines(
+        x=Results[3], ymin=0, ymax=50, colors=["black"], linestyle="dashed", linewidth=1
+    )
+    plt.legend(["11C", "13N", "17F", "12C"])
+    plt.axhline(y=12.1, color="grey", linewidth=2)
+    plt.plot(Energy_exp, counts, color="black")
+    plt.xlabel("E, MeV")
+    plt.ylabel("counts")
+
+    plt.show()
 
     Xmin = [e.copy() for e in Results]
     Xmax = [e.copy() for e in Results]
@@ -440,6 +441,7 @@ def main():
             D = data[3]
             E_He.append(Kinematics(A, B, C, D, angles[0])[0])
             E_lvl.append(Kinematics(A, B, C, D, angles[0])[1])
+    print(E_He)
     Results, width = calibration(E_He, counts)
     output(Results, width, E_lvl)
 
