@@ -177,7 +177,7 @@ def calculate_E_t(
     return E_light_particle_out
 
 
-def approximate(E_calib, E_11C):
+def approximate(E_calib, E_11C, Full_data):
     X_fact = np.array(E_calib)
     Y_fact = np.array(E_11C)
     linear_func = lambda x, b0, b1: b0 + b1 * x
@@ -298,7 +298,19 @@ def approximate(E_calib, E_11C):
             label=label,
         )
 
-    plt.show()
+    plt.show(block=False)
+
+    print("Choose approximation type")
+
+    app_type = input()
+    func = calculation_results_df.loc[app_type, "func"]
+    popt = calculation_results_df.loc[app_type, "popt"]
+    Full_calculations = []
+    print(Full_data)
+    for i in range(len(Full_data)):
+        Full_calculations.append(func(np.array(Full_data[i]), *popt))
+
+    return Full_calculations
 
 
 def calibration(E_He, counts):
@@ -322,71 +334,57 @@ def calibration(E_He, counts):
     plt.xlabel("E, MeV")
     plt.ylabel("counts")
 
-    print("Ground state calibration")
+    plt.show(block=False)
 
-    max = counts[len(counts) - 50]
-    for i in range(len(counts) - 50, len(counts)):
-        if counts[i] > max:
-            max = counts[i]
-            index = i
+    # Модуль калибровки
 
-    E_He_change = [e[:] for e in E_He]
-    delta = abs(Energy_exp[index] - E_He[0][0])
-    for i in range(0, 4):
-        k = 0
-        for E in E_He_change[i]:
-            E_He_change[i][k] = E - delta
-            k += 1
-    print("Сдвиг g.s на ", delta)
+    print("Сalibration")
 
-    # График калибровки по g.s
+    lvl = frame_particles.loc["11C", "Energy_lvl"]
+    for i in range(len(E_He[0])):
+        print("Уровень: ", lvl[str(i)]["E_x"])
+
+    print("Введите число выбранных уровней")
+
+    numbers = int(input())
+    Calib = []
+
+    print("Выберите уровни для калибровки (ввод индексов)")
+    choosed_lvl = []
+    for i in range(numbers):
+        choosed_lvl.append(int(input()))
+
+    print("Положение выбранных уровней")
+    for i in range(len(choosed_lvl)):
+        Calib.append(float(input()))
+
+    Calibration_lvls = []
+
+    for index in choosed_lvl:
+        Calibration_lvls.append(E_He[0][index])
+
+    Results = approximate(Calibration_lvls, Calib, E_He)
 
     plt.figure()
     plt.vlines(
-        x=E_He_change[0],
-        ymin=0,
-        ymax=50,
-        colors=["red"],
-        linestyle="dashed",
-        linewidth=1,
+        x=Results[0], ymin=0, ymax=50, colors=["red"], linestyle="dashed", linewidth=1
     )
     plt.vlines(
-        x=E_He_change[1],
-        ymin=0,
-        ymax=50,
-        colors=["blue"],
-        linestyle="dashed",
-        linewidth=1,
+        x=Results[1], ymin=0, ymax=50, colors=["blue"], linestyle="dashed", linewidth=1
     )
     plt.vlines(
-        x=E_He_change[2],
-        ymin=0,
-        ymax=50,
-        colors=["green"],
-        linestyle="dashed",
-        linewidth=1,
+        x=Results[2], ymin=0, ymax=50, colors=["green"], linestyle="dashed", linewidth=1
     )
     plt.vlines(
-        x=E_He_change[3],
-        ymin=0,
-        ymax=50,
-        colors=["black"],
-        linestyle="dashed",
-        linewidth=1,
+        x=Results[3], ymin=0, ymax=50, colors=["black"], linestyle="dashed", linewidth=1
     )
     plt.legend(["11C", "13N", "17F", "12C"])
-    plt.bar(Energy_exp, counts, align="edge", linewidth=1.0, edgecolor="k", width=0.1)
+    plt.axhline(y=12.1, color="grey", linewidth=2)
+    plt.plot(Energy_exp, counts, color="black")
+    plt.xlabel("E, MeV")
+    plt.ylabel("counts")
+
     plt.show(block=False)
-
-    # Ручная калибровка
-    print("Введите калибровку вручную")
-    lvl = frame_particles.loc["11C", "Energy_lvl"]
-    Calib = []
-    for i in range(len(E_He_change[0])):
-        print("Уровень: ", lvl[str(i)]["E_x"])
-        Calib.append(float(input()))
-
-    approximate(Calib, E_He_change[0])
 
 
 def Kinematics(A, B, C, D, angles):
