@@ -378,7 +378,7 @@ def output(Results, width, E_lvl):
     plt.xlabel("E, MeV")
     plt.ylabel("counts")
 
-    plt.show()
+    plt.show(block = False)
 
     Xmin = [e.copy() for e in Results]
     Xmax = [e.copy() for e in Results]
