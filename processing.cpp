@@ -1,7 +1,7 @@
 void processing() {
 
     TH1F *hist = new TH1F("hist", "histogram", 170, 35, 52);
-
+    // Считывание исходника
     fstream file;
     file.open("/Users/semenraydun/Desktop/NIRS/RUN010/RUN010_6He_bin/RUN010_dE2(6He)_20.7.txt", ios::in);
     string line;
@@ -16,7 +16,7 @@ void processing() {
     file.close();
 
     
-
+//Считывание питоновского файла
     TTree *t = new TTree("t", "tree from 10_dE2");
     t->ReadFile("/Users/semenraydun/Documents/GitHub/NIRS/10_dE2.csv", "Ядро/C:Уровень/F:Xc/F:Xcmin/F:Xcmax/F:Wmin/F:Wmax/F:Amin/F:Amax/F");
   
@@ -35,6 +35,7 @@ void processing() {
     TCanvas *c1 = new TCanvas();
     hist->SetMarkerStyle(3);
     hist->Draw();
+    //Дальше все для total
     string gauss1;
     // Формирую строку по примеру gausn(0)+gausn(3)+...
     for (int i = 0; i < 45; i++) {
@@ -50,7 +51,7 @@ void processing() {
     total->SetLineColor(5);
 
     Double_t par[132];
-
+// 
    for (int i = 0; i < 45; i++) {
    t->GetEntry(i);
    total->SetParLimits(3*i,Amin,10000);
@@ -62,7 +63,7 @@ void processing() {
     ofstream fout("Fit10_dE2.txt");
     fout<<"E_x"<<"        "<<"Summ"<<"        "<< "d_Summ"<<endl; 
     total->GetParameters(par);
-
+    // Формирую TF для каждого уровня
         for (int i = 0; i < 45; i++) {
         t->GetEntry(i);
         TF1 *g = new TF1("g", "gausn", Xtotmin, Xtotmax);
