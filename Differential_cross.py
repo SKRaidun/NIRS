@@ -14,8 +14,9 @@ frame_particles = pd.DataFrame(dict_particles).T
 Energy_exp = []
 counts = []
 angles = [20.7]
+
 with open(
-    "/Users/semenraydun/Desktop/NIRS/RUN010/RUN010_6He_bin/RUN010_dE2(6He)_20.7.txt",
+    "RUN010_dE2(6He)_20.7.txt",
     "r",
 ) as file:
     for line in file:
@@ -128,7 +129,7 @@ def calculate_E_t(
         E_light_particle_out = None
         E_light_particle_out_u = None
 
-    return E_light_particle_out
+    return E_light_particle_out, E_light_particle_out_u
 
 
 def approximate(E_calib, E_11C, Full_data):
@@ -431,7 +432,7 @@ def output(Results, width, E_lvl):
 def main():
     E_He = []
     E_lvl = []
-    with open("/Users/semenraydun/Desktop/NIRS/reactions.txt", "r") as file:
+    with open("reactions.txt", "r") as file:
         for line in file:
             data = line.split()
             A = data[0]
