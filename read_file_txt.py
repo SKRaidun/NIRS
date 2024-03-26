@@ -8,16 +8,18 @@ def read_sort_file_txt():
     list_file = list(sorted(Path('.').glob('*.txt')))
     return list_file
 
-print(len(read_sort_file_txt()))
+print(type(read_sort_file_txt()))
 
+# извлекаем название из файлов данных
 def get_name_datafiles():
     i = 0
     while i < len(read_sort_file_txt()):
-        list_name_file = read_sort_file_txt().split('_')
+        list_name_file = read_sort_file_txt()[i].split('_')
         i += 1
     return list_name_file
 
-#print(get_name_datafiles())
+
+print(get_name_datafiles())
 
 
 # for file in files:
