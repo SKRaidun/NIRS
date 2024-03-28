@@ -16,7 +16,7 @@ counts = []
 angles = [20.7]
 
 with open(
-        "sorted_data_txt/RUN010_dE2(6He)_20.7.txt",
+        "sorted_data_txt/RUN010_dE2_6He_20.7.txt",
     "r",
 ) as file:
     for line in file:

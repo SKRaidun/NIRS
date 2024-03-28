@@ -35,17 +35,19 @@ def get_name_datafiles():
     list_name_file = []
     list_id_file = []
     list_run = []
-    list_type_detector_and_contur = []
+    list_type_detector = []
+    list_contur = []
     list_degree = []
     # dict_list_file = {}
     for id_file in range(len(read_sort_file_txt())):
         list_name_file.append(read_sort_file_txt()[id_file].split('_'))
         list_id_file.append(id_file)
         list_run.append(list_name_file[id_file][2].replace('txt\\RUN', ''))
-        list_type_detector_and_contur.append(list_name_file[id_file][3])
-        list_degree.append(list_name_file[id_file][4].replace('.txt', ''))
+        list_type_detector.append(list_name_file[id_file][3])
+        list_contur.append(list_name_file[id_file][4])
+        list_degree.append(list_name_file[id_file][5].replace('.txt', ''))
 
-    return list_id_file, list_run, list_degree, list_name_file
+    return list_id_file, list_run, list_degree, list_type_detector, list_contur
 
 
 print(get_name_datafiles())
