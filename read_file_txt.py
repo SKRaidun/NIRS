@@ -22,6 +22,7 @@ def dict_datafiles():
     list_contur = []
     list_degree = []
     dict_list_file = {}
+    file = []
 
     for id_file in range(len(read_sort_file_txt())):
         list_name_file.append(read_sort_file_txt()[id_file].split('_'))
@@ -32,6 +33,7 @@ def dict_datafiles():
         list_degree.append(list_name_file[id_file][5].replace('.txt', ''))
 
     dict_list_file['id_file'] = list_id_file
+    #dict_list_file['name_of_file'] = read_sort_file_txt()
     dict_list_file['run'] = list_run
     dict_list_file['type_detector'] = list_type_detector
     dict_list_file['contur'] = list_contur
